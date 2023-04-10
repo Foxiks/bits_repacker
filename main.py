@@ -6,8 +6,18 @@ input_file_name=''
 out_file_name=''
 in_lb=int()
 out_lb=int()
+invert_state=int()
+
+def byte_inverter_state():
+    global invert_state
+    if(var1.get()==1):
+        invert_state=1
+    if(var1.get()==0):
+        invert_state=0
+    return
 
 def dn_packer(input_file, out_file, in_lb, out_lb, chunk_size):
+    global invert_state
     data_stream=bitstring.ConstBitStream(input_file)
     while True:
         try:
@@ -17,10 +27,16 @@ def dn_packer(input_file, out_file, in_lb, out_lb, chunk_size):
             break
         chunks = [data[i:i+int(in_lb)] for i in range(0, len(data), int(in_lb))]
         chunks = [str[:-int(int(in_lb)-int(out_lb))] for str in chunks]
-        bitstring.BitArray(bin=''.join(chunks)).tofile(out_file)
+        if(invert_state==1):
+            data=bitstring.BitArray(bin=''.join(chunks))
+            data.invert()
+            data.tofile(out_file)
+        if(invert_state==0):
+            bitstring.BitArray(bin=''.join(chunks)).tofile(out_file)
     return
 
 def up_packer(input_file, out_file, in_lb, out_lb, chunk_size):
+    global invert_state
     data_stream=bitstring.ConstBitStream(input_file)
     while True:
         try:
@@ -30,7 +46,12 @@ def up_packer(input_file, out_file, in_lb, out_lb, chunk_size):
             break
         chunks = [data[i:i+int(in_lb)] for i in range(0, len(data), int(in_lb))]
         chunks = [str1+str('0'*int(int(out_lb)-int(in_lb))) for str1 in chunks]
-        bitstring.BitArray(bin=''.join(chunks)).tofile(out_file)
+        if(invert_state==1):
+            data=bitstring.BitArray(bin=''.join(chunks))
+            data.invert()
+            data.tofile(out_file)
+        if(invert_state==0):
+            bitstring.BitArray(bin=''.join(chunks)).tofile(out_file)
     return
 
 def input_file_dialog():
@@ -65,35 +86,38 @@ def main():
 
 if(__name__ == '__main__'):
     window = Tk()
-    window.title("Form1")
+    var1 = IntVar()
+    icon = PhotoImage(file="icon.png")
+    window.iconphoto(True, icon)
+    window.title("Bits Repacker [by Egor UB1QBJ] (Ver 1.1)")
     window.geometry('380x100')
     window.resizable(width=False, height=False)
     lbl = Label(window, text="Input file:")
-    lbl.grid(column=0, row=0)
+    lbl.grid(column=0, row=0, sticky='e')
     txt1 = Entry(window,width=33)
     txt1.grid(column=1, row=0, columnspan=2)
     btns = Button(window, text="Open", command=input_file_dialog, width=8)
     btns.grid(column=3, row=0)
     lbl1 = Label(window, text="Output file:")
-    lbl1.grid(column=0, row=1)
+    lbl1.grid(column=0, row=1, sticky='e')
     txt2 = Entry(window,width=33)
     txt2.grid(column=1, row=1, columnspan=2)
     btns1 = Button(window, text="Select", command=out_file_dialog, width=8)
     btns1.grid(column=3, row=1)
     lbl2 = Label(window, text="Chunk size (bits):")
-    lbl2.grid(column=0, row=3)
-    txt3 = Entry(window,width=10)
+    lbl2.grid(column=0, row=3, sticky='e')
+    txt3 = Entry(window,width=13)
     txt3.grid(column=1, row=3)
     lbl3 = Label(window, text="Bits for input bytes:")
-    lbl3.grid(column=0, row=2)
-    txt4 = Entry(window,width=10)
+    lbl3.grid(column=0, row=2, sticky='e')
+    txt4 = Entry(window,width=13)
     txt4.grid(column=1, row=2)
     lbl4 = Label(window, text="Bits for output bytes:")
-    lbl4.grid(column=2, row=2)
+    lbl4.grid(column=2, row=2, sticky='e')
     txt5 = Entry(window,width=10)
     txt5.grid(column=3, row=2)
     btns2 = Button(window, text="Start", command=main, width=8)
     btns2.grid(column=3, row=3)
-    lbl5 = Label(window, text="Bits repacker [by UB1QBJ]")
-    lbl5.grid(column=2, row=3)
+    c1 = Checkbutton(window, text='Invert output bits',variable=var1, onvalue=1, offvalue=0, command=byte_inverter_state)
+    c1.grid(column=2, row=3)
     window.mainloop()
