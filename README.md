@@ -21,6 +21,12 @@ Repacking a file with 9 bit bytes into a file with 2 bit bytes:
 0b111000110001000110 -> 0b1100
 ```
 
+### Example 4
+Repacking a file with 8-bit bytes into a file with 10-bit bytes and inverting the output bits:
+```
+0b1111111111111111 -> 0b00000000110000000011
+```
+
 ## Usage
 To improve the performance of this utility, I recommend using the pypy3 interpreter.
 Before using, you need to install the bitstring and tkinter modules:
