@@ -90,7 +90,7 @@ if(__name__ == '__main__'):
     icon = PhotoImage(file="icon.png")
     window.iconphoto(True, icon)
     window.title("Bits Repacker [by Egor UB1QBJ] (Ver 1.1)")
-    window.geometry('380x100')
+    window.geometry('376x100')
     window.resizable(width=False, height=False)
     lbl = Label(window, text="Input file:")
     lbl.grid(column=0, row=0, sticky='e')
