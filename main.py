@@ -1,6 +1,7 @@
-import bitstring
+import bitstring, time, os
 from tkinter import *
 from tkinter.filedialog import askopenfilename, asksaveasfilename
+import tkinter.messagebox as mb
 chunk_size=int()
 input_file_name=''
 out_file_name=''
@@ -19,6 +20,7 @@ def byte_inverter_state():
 def dn_packer(input_file, out_file, in_lb, out_lb, chunk_size):
     global invert_state
     data_stream=bitstring.ConstBitStream(input_file)
+    start_time = time.time()
     while True:
         try:
             data=data_stream.read(int(chunk_size)).bin
@@ -33,11 +35,14 @@ def dn_packer(input_file, out_file, in_lb, out_lb, chunk_size):
             data.tofile(out_file)
         if(invert_state==0):
             bitstring.BitArray(bin=''.join(chunks)).tofile(out_file)
+    total_time = str(time.time()-start_time)
+    mb.showinfo("", str("Done! Total time: "+str(total_time)))
     return
 
 def up_packer(input_file, out_file, in_lb, out_lb, chunk_size):
     global invert_state
     data_stream=bitstring.ConstBitStream(input_file)
+    start_time = time.time()
     while True:
         try:
             data=data_stream.read(int(chunk_size)).bin
@@ -52,6 +57,8 @@ def up_packer(input_file, out_file, in_lb, out_lb, chunk_size):
             data.tofile(out_file)
         if(invert_state==0):
             bitstring.BitArray(bin=''.join(chunks)).tofile(out_file)
+    total_time = str(time.time()-start_time)
+    mb.showinfo("", str("Done! Total time: "+total_time))
     return
 
 def input_file_dialog():
@@ -60,6 +67,8 @@ def input_file_dialog():
     filename_input = askopenfilename()
     txt1.insert(0,str(filename_input))
     input_file_name=txt1.get()
+    s_f=os.path.getsize(str(input_file_name))
+    window.title("Bits Repacker 1.2 by UB1QBJ ["+str(int(s_f/1048576))+" Mb]")
     return
 
 def out_file_dialog():
@@ -82,15 +91,15 @@ def main():
     if(int(in_lb)<int(out_lb)):
         up_packer(input_file=input_file, chunk_size=chunk_size, in_lb=in_lb, out_lb=out_lb, out_file=out_file)
     if(int(in_lb)==int(out_lb)):
-        None
+        mb.showinfo("", str("Bad values! Bits for input bytes = Bits for output bytes!"))
 
 if(__name__ == '__main__'):
     window = Tk()
     var1 = IntVar()
     icon = PhotoImage(file="icon.png")
     window.iconphoto(True, icon)
-    window.title("Bits Repacker [by Egor UB1QBJ] (Ver 1.1)")
-    window.geometry('376x100')
+    window.title("Bits Repacker 1.2 by UB1QBJ")
+    window.geometry('376x99')
     window.resizable(width=False, height=False)
     lbl = Label(window, text="Input file:")
     lbl.grid(column=0, row=0, sticky='e')
